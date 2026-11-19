@@ -125,28 +125,39 @@ export async function loginUser({ username, password }) {
  */
 export async function createOrder(orderData) {
   try {
+    // Get user id from localStorage if available
+    let userId = null;
+    try {
+      const storedUser = JSON.parse(localStorage.getItem('richman_user') || '{}');
+      userId = storedUser.id || null;
+    } catch (_) {}
+
+    const insertPayload = {
+      order_no: orderData.id,
+      game_id: orderData.gameId,
+      player_id: orderData.playerId,
+      in_game_name: orderData.verifiedName,
+      package_name: orderData.package,
+      price: orderData.price,
+      payment_method: orderData.payment,
+      payment_status: 'paid',
+      delivery_status: 'completed',
+      coins_earned: orderData.coinsEarned || 0,
+    };
+    // Only add user_id if it's a valid uuid (from Supabase profile)
+    if (userId && typeof userId === 'string' && userId.includes('-')) {
+      insertPayload.user_id = userId;
+    }
+
     const { data, error } = await supabase
       .from('orders')
-      .insert([
-        {
-          order_no: orderData.id,
-          game_id: orderData.gameId,
-          player_id: orderData.playerId,
-          in_game_name: orderData.verifiedName,
-          package_name: orderData.package,
-          price: orderData.price,
-          payment_method: orderData.payment,
-          payment_status: 'paid',
-          delivery_status: 'completed',
-          coins_earned: orderData.coinsEarned || 0,
-        }
-      ])
+      .insert([insertPayload])
       .select();
 
     if (error) {
-      console.warn('Supabase insert note (using fallback):', error.message);
+      console.warn('Supabase insert note (using fallback):', error.message, error.code);
     } else {
-      console.log('Order successfully saved to Supabase:', data);
+      console.log('✅ Order saved to Supabase:', data);
     }
   } catch (err) {
     console.warn('Network error saving to Supabase:', err);
