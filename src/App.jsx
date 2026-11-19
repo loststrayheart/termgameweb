@@ -1,34 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import FlashSaleBanner from './components/FlashSaleBanner';
 import HeroSection from './components/HeroSection';
 import GameSelector from './components/GameSelector';
 import TopUpPage from './components/TopUpPage';
-import LineLoginModal from './components/LineLoginModal';
 import PaymentModal from './components/PaymentModal';
 import OrderHistoryModal from './components/OrderHistoryModal';
 import Footer from './components/Footer';
-import { Star, ShieldCheck, Zap, Award } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 export default function App() {
-  // Global user state (stored in localStorage)
-  const [user, setUser] = useState(() => {
-    try {
-      const saved = localStorage.getItem('richman_user');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
-  });
-
   // Navigation: 'home' | 'pubg' | 'valorant'
   const [activeView, setActiveView] = useState('home');
   const [selectedGameId, setSelectedGameId] = useState('pubg');
   const [preselectedPackage, setPreselectedPackage] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Modals
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  // Modals (ตัด loginModalOpen ออกแล้ว)
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [currentOrder, setCurrentOrder] = useState(null);
@@ -47,11 +35,6 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('richman_user');
-    setUser(null);
-  };
-
   const handleProceedToPayment = (orderData) => {
     setCurrentOrder(orderData);
     setPaymentModalOpen(true);
@@ -59,12 +42,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0B0F19] text-slate-100 selection:bg-indigo-600 selection:text-white">
-      
-      {/* Top Navbar */}
+
+      {/* Top Navbar (ส่งเฉพาะ prop ที่จำเป็น ไม่ต้องมี login/logout) */}
       <Navbar
-        user={user}
-        onOpenLogin={() => setLoginModalOpen(true)}
-        onLogout={handleLogout}
         onSelectGame={handleSelectGame}
         activeView={activeView}
         setActiveView={setActiveView}
@@ -135,7 +115,7 @@ export default function App() {
                       <Star className="w-4 h-4 fill-amber-400" />
                     </div>
                     <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-medium">
-                      "ซื้อแต้ม Valorant 11,000 VP ไปสุ่มบันเดิลใหม่ ลดราคาเยอะมาก แถมล็อกอินด้วย LINE ได้สะสม Coins ด้วย คุ้มสุดๆ"
+                      "ซื้อแต้ม Valorant 11,000 VP ไปสุ่มบันเดิลใหม่ ลดราคาเยอะมาก เติมง่ายไม่ต้องสมัครสมาชิกให้ยุ่งยาก คุ้มสุดๆ"
                     </p>
                     <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
                       <span className="font-bold text-slate-200">น้องแบงค์ (TenZ_TH)</span>
@@ -168,9 +148,7 @@ export default function App() {
         {(activeView === 'pubg' || activeView === 'valorant') && (
           <TopUpPage
             gameId={selectedGameId}
-            user={user}
             onBack={() => setActiveView('home')}
-            onOpenLogin={() => setLoginModalOpen(true)}
             onProceedToPayment={handleProceedToPayment}
             preselectedPackage={preselectedPackage}
           />
@@ -180,22 +158,11 @@ export default function App() {
       {/* Footer */}
       <Footer onSelectGame={handleSelectGame} />
 
-      {/* LINE Login Modal */}
-      <LineLoginModal
-        isOpen={loginModalOpen}
-        onClose={() => setLoginModalOpen(false)}
-        onLoginSuccess={(loggedInUser) => setUser(loggedInUser)}
-      />
-
       {/* Payment / Checkout Modal */}
       <PaymentModal
         isOpen={paymentModalOpen}
         onClose={() => setPaymentModalOpen(false)}
         orderData={currentOrder}
-        onSuccess={() => {
-          const updated = localStorage.getItem('richman_user');
-          if (updated) setUser(JSON.parse(updated));
-        }}
       />
 
       {/* Order History Modal */}
