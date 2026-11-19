@@ -77,4 +77,5 @@ npm run dev
 ## 🛠️ Tech Stack
 - **Framework:** React 19 + Vite
 - **Styling:** Tailwind CSS v4 + Prompt / Kanit Google Font
-- **Icons:** Lucide React
+- **Database:** Supabase (PostgreSQL Cloud)
+- **Deployment:** Vercel (Production CI/CD)
