@@ -1,10 +1,30 @@
-import React from 'react';
-import { X, History, CheckCircle2, Package, Calendar, Gamepad2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, History, CheckCircle2, Package, Calendar, Gamepad2, Loader2 } from 'lucide-react';
+import { getOrders } from '../lib/supabase';
 
 export default function OrderHistoryModal({ isOpen, onClose }) {
-  if (!isOpen) return null;
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const orders = JSON.parse(localStorage.getItem('richman_orders') || '[]');
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let isMounted = true;
+    setLoading(true);
+
+    getOrders().then((data) => {
+      if (isMounted) {
+        setOrders(data || []);
+        setLoading(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
@@ -18,12 +38,12 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
             </div>
             <div>
               <h3 className="font-bold text-base leading-tight text-white">ประวัติคำสั่งซื้อของฉัน</h3>
-              <p className="text-[11px] text-slate-400">รายการเติมเงิน termgame ย้อนหลังทั้งหมด</p>
+              <p className="text-[11px] text-slate-400">บันทึกบนฐานข้อมูล termgame Cloud (Supabase)</p>
             </div>
           </div>
           <button 
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-full transition"
+            className="text-slate-400 hover:text-white p-1 rounded-full transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -31,7 +51,12 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
 
         {/* List */}
         <div className="p-6 max-h-[70vh] overflow-y-auto">
-          {orders.length === 0 ? (
+          {loading ? (
+            <div className="text-center py-12 text-slate-400 flex flex-col items-center justify-center space-y-2">
+              <Loader2 className="w-6 h-6 animate-spin text-indigo-400" />
+              <p className="text-xs">กำลังโหลดประวัติคำสั่งซื้อ...</p>
+            </div>
+          ) : orders.length === 0 ? (
             <div className="text-center py-12 text-slate-500">
               <Package className="w-12 h-12 mx-auto mb-3 text-slate-600 stroke-1" />
               <p className="text-sm font-medium text-slate-300">ยังไม่มีประวัติคำสั่งซื้อ</p>
@@ -69,7 +94,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
 
                     <div className="text-right">
                       <div className="text-sm font-black text-rose-400">
-                        ฿{ord.price.toLocaleString()}
+                        ฿{ord.price?.toLocaleString()}
                       </div>
                       <div className="text-[10px] text-indigo-400 font-bold mt-0.5">
                         +{ord.coinsEarned} Coins
@@ -91,7 +116,7 @@ export default function OrderHistoryModal({ isOpen, onClose }) {
         <div className="p-4 bg-slate-950 border-t border-slate-800 flex justify-end">
           <button
             onClick={onClose}
-            className="px-5 py-2 bg-slate-850 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition border border-slate-700"
+            className="px-5 py-2 bg-slate-850 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition border border-slate-700 cursor-pointer"
           >
             ปิดหน้าต่าง
           </button>

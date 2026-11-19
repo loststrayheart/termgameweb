@@ -11,6 +11,7 @@ import {
   Sparkles,
   ArrowRight
 } from 'lucide-react';
+import { createOrder } from '../lib/supabase';
 
 export default function PaymentModal({ orderData, isOpen, onClose, onSuccess }) {
   const [copied, setCopied] = useState(false);
@@ -69,8 +70,8 @@ export default function PaymentModal({ orderData, isOpen, onClose, onSuccess }) 
         coinsEarned: Math.round(packageItem.price * 0.05),
       };
 
-      const existing = JSON.parse(localStorage.getItem('richman_orders') || '[]');
-      localStorage.setItem('richman_orders', JSON.stringify([finishedOrder, ...existing]));
+      // Save to Supabase & localStorage
+      createOrder(finishedOrder);
 
       if (user) {
         const storedUser = JSON.parse(localStorage.getItem('richman_user') || '{}');

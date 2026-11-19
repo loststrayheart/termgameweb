@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, CheckCircle, Smartphone, QrCode, Shield, Sparkles } from 'lucide-react';
+import { syncUserProfile } from '../lib/supabase';
 
 export default function LineLoginModal({ isOpen, onClose, onLoginSuccess }) {
   const [activeTab, setActiveTab] = useState('quick');
@@ -19,6 +20,7 @@ export default function LineLoginModal({ isOpen, onClose, onLoginSuccess }) {
         loggedInAt: new Date().toISOString(),
       };
       localStorage.setItem('richman_user', JSON.stringify(user));
+      syncUserProfile(user);
       setLoading(false);
       onLoginSuccess(user);
       onClose();
