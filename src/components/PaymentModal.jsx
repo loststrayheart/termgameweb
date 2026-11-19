@@ -53,37 +53,35 @@ export default function PaymentModal({ orderData, isOpen, onClose, onSuccess }) 
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleSimulateSuccess = () => {
+  const handleSimulateSuccess = async () => {
     setIsProcessing(true);
-    setTimeout(() => {
-      const finishedOrder = {
-        id: orderRef,
-        date: new Date().toLocaleString('th-TH'),
-        gameName: game.fullName,
-        gameId: game.id,
-        playerId,
-        verifiedName,
-        package: packageItem.name,
-        price: packageItem.price,
-        payment: paymentMethod.name,
-        status: 'จัดส่งสำเร็จ',
-        coinsEarned: Math.round(packageItem.price * 0.05),
-      };
+    const finishedOrder = {
+      id: orderRef,
+      date: new Date().toLocaleString('th-TH'),
+      gameName: game.fullName,
+      gameId: game.id,
+      playerId,
+      verifiedName,
+      package: packageItem.name,
+      price: packageItem.price,
+      payment: paymentMethod.name,
+      status: 'จัดส่งสำเร็จ',
+      coinsEarned: Math.round(packageItem.price * 0.05),
+    };
 
-      // Save to Supabase & localStorage
-      createOrder(finishedOrder);
+    // Save to Supabase & localStorage
+    await createOrder(finishedOrder);
 
-      if (user) {
-        const storedUser = JSON.parse(localStorage.getItem('richman_user') || '{}');
-        storedUser.coins = (storedUser.coins || 0) + finishedOrder.coinsEarned;
-        localStorage.setItem('richman_user', JSON.stringify(storedUser));
-      }
+    if (user) {
+      const storedUser = JSON.parse(localStorage.getItem('richman_user') || '{}');
+      storedUser.coins = (storedUser.coins || 0) + finishedOrder.coinsEarned;
+      localStorage.setItem('richman_user', JSON.stringify(storedUser));
+    }
 
-      setIsProcessing(false);
-      setIsCompleted(true);
-      setCompletedOrder(finishedOrder);
-      if (onSuccess) onSuccess(finishedOrder);
-    }, 1000);
+    setIsProcessing(false);
+    setIsCompleted(true);
+    setCompletedOrder(finishedOrder);
+    if (onSuccess) onSuccess(finishedOrder);
   };
 
   return (
