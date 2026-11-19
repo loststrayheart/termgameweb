@@ -3,17 +3,22 @@
 -- Run this script in Supabase Dashboard -> SQL Editor -> New query
 -- ========================================================
 
--- 1. Create Profiles table
+-- 1. Create or Update Profiles table with Username & Password
 create table if not exists public.profiles (
   id uuid primary key default gen_random_uuid(),
-  line_user_id text unique,
-  display_name text not null,
+  username text unique,
+  password text,
+  display_name text,
   avatar_url text,
   coins_balance int default 250,
   role text default 'customer',
-  created_at timestamp with time zone default now(),
-  updated_at timestamp with time zone default now()
+  created_at timestamp with time zone default now()
 );
+
+-- Ensure columns exist if table was already created earlier
+alter table public.profiles add column if not exists username text unique;
+alter table public.profiles add column if not exists password text;
+alter table public.profiles add column if not exists coins_balance int default 250;
 
 -- 2. Create Orders table
 create table if not exists public.orders (
@@ -54,7 +59,7 @@ create policy "Allow public select orders" on public.orders for select to anon u
 drop policy if exists "Allow public insert orders" on public.orders;
 create policy "Allow public insert orders" on public.orders for insert to anon with check (true);
 
--- Policies for profiles
+-- Policies for profiles (Allow customers to register, login and view profile)
 drop policy if exists "Allow public select profiles" on public.profiles;
 create policy "Allow public select profiles" on public.profiles for select to anon using (true);
 

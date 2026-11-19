@@ -146,10 +146,10 @@ export default function Navbar({
                     <img
                       src={user.avatar}
                       alt={user.name}
-                      className="w-8 h-8 rounded-full object-cover border-2 border-[#06C755]"
+                      className="w-8 h-8 rounded-full object-cover border-2 border-indigo-500"
                     />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-[#06C755] rounded-full border border-slate-900 flex items-center justify-center">
-                      <span className="text-[7px] text-white font-bold">L</span>
+                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border border-slate-900 flex items-center justify-center">
+                      <span className="text-[7px] text-white font-bold">✓</span>
                     </div>
                   </div>
                   <div className="hidden sm:block">
@@ -171,8 +171,8 @@ export default function Navbar({
                     onMouseLeave={() => setUserDropdownOpen(false)}
                   >
                     <div className="px-4 py-2.5 border-b border-slate-800 bg-slate-950/60">
-                      <p className="text-xs text-slate-400">บัญชี LINE ที่เชื่อมต่อ</p>
-                      <p className="text-sm font-bold text-white truncate">{user.name}</p>
+                      <p className="text-xs text-slate-400">บัญชีสมาชิก termgame</p>
+                      <p className="text-sm font-bold text-white truncate">@{user.username || user.name}</p>
                       <div className="mt-1 flex items-center space-x-1 text-xs text-indigo-400 font-bold">
                         <Coins className="w-3.5 h-3.5" />
                         <span>ยอดสะสม: {user.coins} Coins</span>
@@ -184,7 +184,7 @@ export default function Navbar({
                         setUserDropdownOpen(false);
                         onOpenHistory();
                       }}
-                      className="w-full px-4 py-2.5 text-left text-xs font-medium text-slate-300 hover:bg-slate-800 flex items-center space-x-2.5"
+                      className="w-full px-4 py-2.5 text-left text-xs font-medium text-slate-300 hover:bg-slate-800 flex items-center space-x-2.5 cursor-pointer"
                     >
                       <History className="w-4 h-4 text-slate-400" />
                       <span>ประวัติคำสั่งซื้อทั้งหมด</span>
@@ -195,10 +195,10 @@ export default function Navbar({
                         setUserDropdownOpen(false);
                         onLogout();
                       }}
-                      className="w-full px-4 py-2.5 text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 flex items-center space-x-2.5"
+                      className="w-full px-4 py-2.5 text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 flex items-center space-x-2.5 cursor-pointer"
                     >
                       <LogOut className="w-4 h-4 text-rose-400" />
-                      <span>ออกจากระบบ LINE</span>
+                      <span>ออกจากระบบ</span>
                     </button>
                   </div>
                 )}
@@ -206,14 +206,10 @@ export default function Navbar({
             ) : (
               <button
                 onClick={onOpenLogin}
-                className="bg-[#06C755] hover:bg-[#05b34c] active:scale-95 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center space-x-2 shadow-lg shadow-emerald-500/20 transition cursor-pointer"
+                className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-indigo-600 hover:to-pink-600 active:scale-95 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center space-x-2 shadow-lg shadow-indigo-500/25 transition cursor-pointer"
               >
-                <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center">
-                  <svg className="w-3.5 h-3.5 fill-[#06C755]" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 5.92 2 10.75c0 3.01 1.76 5.66 4.45 7.15-.2.72-.71 2.61-.81 3.02-.13.52.19.51.4.37.17-.11 2.37-1.61 3.32-2.26.85.12 1.74.19 2.64.19 5.52 0 10-3.92 10-8.75S17.52 2 12 2z"/>
-                  </svg>
-                </div>
-                <span>ล็อกอินด้วย LINE</span>
+                <User className="w-4 h-4 text-white" />
+                <span>เข้าสู่ระบบ / สมัคร</span>
               </button>
             )}
 

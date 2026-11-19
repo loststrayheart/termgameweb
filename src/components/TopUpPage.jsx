@@ -164,32 +164,32 @@ export default function TopUpPage({
           <span>กลับไปเลือกเกม</span>
         </button>
 
-        {/* LINE Login Notice Banner */}
+        {/* Member Login Notice Banner */}
         {!user ? (
           <div className="mb-6 bg-indigo-950/40 border border-indigo-500/30 text-indigo-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
             <div className="flex items-center space-x-3 text-xs sm:text-sm">
               <Info className="w-5 h-5 text-indigo-400 shrink-0" />
               <span>
-                กรุณา <strong className="font-bold underline cursor-pointer text-emerald-400" onClick={onOpenLogin}>ล็อกอินด้วย LINE</strong> เพื่อรับเหรียญสะสมและบันทึกประวัติคำสั่งซื้ออัตโนมัติ
+                กรุณา <strong className="font-bold underline cursor-pointer text-indigo-300" onClick={onOpenLogin}>เข้าสู่ระบบสมาชิก</strong> เพื่อรับเหรียญสะสมและบันทึกประวัติคำสั่งซื้ออัตโนมัติ
               </span>
             </div>
             <button
               onClick={onOpenLogin}
-              className="bg-[#06C755] hover:bg-[#05b34c] text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center space-x-1.5 shadow-lg shadow-emerald-600/20 transition cursor-pointer"
+              className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center space-x-1.5 shadow-lg shadow-indigo-600/20 transition cursor-pointer"
             >
-              <span>ล็อกอินด้วย LINE</span>
+              <span>เข้าสู่ระบบ / สมัคร</span>
             </button>
           </div>
         ) : (
           <div className="mb-6 bg-emerald-950/40 border border-emerald-500/30 text-emerald-200 rounded-2xl p-3.5 flex items-center justify-between shadow-lg">
             <div className="flex items-center space-x-2.5 text-xs sm:text-sm">
-              <CheckCircle2 className="w-4 h-4 text-[#06C755]" />
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>
-                เข้าสู่ระบบด้วย LINE: <strong className="text-white">{user.name}</strong> • ยอดสะสม: <strong className="text-indigo-400">{user.coins} Coins</strong>
+                เข้าสู่ระบบสมาชิก: <strong className="text-white">@{user.username || user.name}</strong> • ยอดสะสม: <strong className="text-indigo-400">{user.coins} Coins</strong>
               </span>
             </div>
-            <span className="text-[11px] bg-[#06C755] text-white px-2.5 py-0.5 rounded-lg font-bold">
-              LINE Verified
+            <span className="text-[11px] bg-emerald-600 text-white px-2.5 py-0.5 rounded-lg font-bold">
+              สมาชิก termgame
             </span>
           </div>
         )}

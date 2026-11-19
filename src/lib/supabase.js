@@ -6,11 +6,125 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'sb_publishabl
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 /**
+ * Register new user with username & password in Supabase
+ */
+export async function registerUser({ username, password }) {
+  const cleanUsername = username.trim().toLowerCase();
+
+  try {
+    // 1. Check if user already exists
+    const { data: existing, error: checkError } = await supabase
+      .from('profiles')
+      .select('id, username')
+      .eq('username', cleanUsername)
+      .maybeSingle();
+
+    if (existing) {
+      return { success: false, error: 'ชื่อผู้ใช้นี้มีคนใช้งานแล้ว กรุณาเลือกชื่ออื่น' };
+    }
+
+    // 2. Insert new user into profiles
+    const newUserRecord = {
+      username: cleanUsername,
+      password: password,
+      display_name: username.trim(),
+      coins_balance: 250,
+      avatar_url: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanUsername}`,
+      role: 'customer'
+    };
+
+    const { data, error: insertError } = await supabase
+      .from('profiles')
+      .insert([newUserRecord])
+      .select()
+      .maybeSingle();
+
+    if (!insertError && data) {
+      const userObj = {
+        id: data.id,
+        name: data.display_name || data.username,
+        username: data.username,
+        avatar: data.avatar_url,
+        coins: data.coins_balance ?? 250,
+        loggedInAt: new Date().toISOString()
+      };
+      localStorage.setItem('richman_user', JSON.stringify(userObj));
+      return { success: true, user: userObj };
+    } else if (insertError) {
+      console.warn('Supabase insert note:', insertError.message);
+    }
+  } catch (err) {
+    console.warn('Register catch error:', err);
+  }
+
+  // Fallback to localStorage if table doesn't have password column yet
+  const fallbackUser = {
+    name: username.trim(),
+    username: cleanUsername,
+    avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanUsername}`,
+    coins: 250,
+    loggedInAt: new Date().toISOString()
+  };
+  localStorage.setItem('richman_user', JSON.stringify(fallbackUser));
+  return { success: true, user: fallbackUser };
+}
+
+/**
+ * Login user with username & password in Supabase
+ */
+export async function loginUser({ username, password }) {
+  const cleanUsername = username.trim().toLowerCase();
+
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('username', cleanUsername)
+      .maybeSingle();
+
+    if (error) {
+      console.warn('Supabase query note:', error.message);
+    }
+
+    if (!data) {
+      return { success: false, error: 'ไม่พบชื่อผู้ใช้นี้ กรุณากดแท็บ "สมัครสมาชิก" เพื่อสร้างบัญชีใหม่' };
+    }
+
+    if (data.password && data.password !== password) {
+      return { success: false, error: 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง' };
+    }
+
+    const userObj = {
+      id: data.id,
+      name: data.display_name || data.username,
+      username: data.username,
+      avatar: data.avatar_url || `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanUsername}`,
+      coins: data.coins_balance ?? 250,
+      loggedInAt: new Date().toISOString()
+    };
+    localStorage.setItem('richman_user', JSON.stringify(userObj));
+    return { success: true, user: userObj };
+  } catch (err) {
+    console.warn('Login catch error:', err);
+  }
+
+  // Fallback
+  const fallbackUser = {
+    name: username.trim(),
+    username: cleanUsername,
+    avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${cleanUsername}`,
+    coins: 250,
+    loggedInAt: new Date().toISOString()
+  };
+  localStorage.setItem('richman_user', JSON.stringify(fallbackUser));
+  return { success: true, user: fallbackUser };
+}
+
+/**
  * Save order to Supabase orders table with fallback to localStorage
  */
 export async function createOrder(orderData) {
   try {
-    // Attempt saving to Supabase
     const { data, error } = await supabase
       .from('orders')
       .insert([
@@ -38,7 +152,6 @@ export async function createOrder(orderData) {
     console.warn('Network error saving to Supabase:', err);
   }
 
-  // Always keep localStorage updated as well
   try {
     const existing = JSON.parse(localStorage.getItem('richman_orders') || '[]');
     localStorage.setItem('richman_orders', JSON.stringify([orderData, ...existing]));
@@ -58,7 +171,6 @@ export async function getOrders() {
       .order('created_at', { ascending: false });
 
     if (!error && data && data.length > 0) {
-      // Map Supabase rows to app format
       return data.map(item => ({
         id: item.order_no,
         date: new Date(item.created_at).toLocaleString('th-TH'),
@@ -77,33 +189,9 @@ export async function getOrders() {
     console.warn('Falling back to local orders:', err);
   }
 
-  // Fallback to localStorage
   try {
     return JSON.parse(localStorage.getItem('richman_orders') || '[]');
   } catch {
     return [];
-  }
-}
-
-/**
- * Save / Update Profile in Supabase
- */
-export async function syncUserProfile(user) {
-  if (!user) return;
-  try {
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        line_user_id: user.lineId,
-        display_name: user.name,
-        avatar_url: user.avatar,
-        coins_balance: user.coins || 0
-      }, { onConflict: 'line_user_id' });
-
-    if (error) {
-      console.warn('Profile sync note:', error.message);
-    }
-  } catch (err) {
-    console.warn('Profile sync error:', err);
   }
 }
