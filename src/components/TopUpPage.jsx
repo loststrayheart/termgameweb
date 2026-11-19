@@ -1,31 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ArrowLeft, 
-  Info, 
-  CheckCircle2, 
-  AlertCircle, 
-  HelpCircle, 
-  ShieldCheck, 
-  Sparkles, 
-  ChevronDown, 
+import {
+  ArrowLeft,
+  CheckCircle2,
+  AlertCircle,
+  ChevronDown,
   ChevronUp,
   CreditCard,
-  QrCode,
-  Wallet,
-  Smartphone,
-  ExternalLink,
-  Coins,
-  Zap
+  QrCode
 } from 'lucide-react';
 import { GAMES, PAYMENT_METHODS } from '../data/mockData';
 
-export default function TopUpPage({ 
-  gameId, 
-  user, 
-  onBack, 
-  onOpenLogin, 
+export default function TopUpPage({
+  gameId,
+  onBack,
   onProceedToPayment,
-  preselectedPackage 
+  preselectedPackage
 }) {
   const game = GAMES.find(g => g.id === gameId) || GAMES[0];
   const isPubg = game.id === 'pubg';
@@ -36,7 +25,7 @@ export default function TopUpPage({
   const [verifiedName, setVerifiedName] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifyError, setVerifyError] = useState('');
-  
+
   const [selectedPayment, setSelectedPayment] = useState('promptpay_free');
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [readMore, setReadMore] = useState(false);
@@ -113,21 +102,19 @@ export default function TopUpPage({
       playerId: playerId.trim(),
       verifiedName: verifiedName || (game.id === 'pubg' ? 'ChickenMaster' : 'AgentTH#1'),
       paymentMethod: currentPayment,
-      packageItem: selectedPackage,
-      user
+      packageItem: selectedPackage
     });
   };
 
   return (
     <div className="bg-[#0B0F19] min-h-screen pb-28 text-slate-100">
-      
+
       {/* Top Header Banner */}
       <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border-b border-slate-800 py-4 px-4 sm:px-6 lg:px-8 shadow-xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3.5">
-            <div className={`w-11 h-11 rounded-2xl bg-slate-950 p-1.5 border-2 shadow-lg shrink-0 ${
-              isPubg ? 'border-amber-400' : 'border-rose-400'
-            }`}>
+            <div className={`w-11 h-11 rounded-2xl bg-slate-950 p-1.5 border-2 shadow-lg shrink-0 ${isPubg ? 'border-amber-400' : 'border-rose-400'
+              }`}>
               <img src={game.icon} alt={game.name} className="w-full h-full object-contain" />
             </div>
             <div>
@@ -138,7 +125,7 @@ export default function TopUpPage({
                 </span>
               </h1>
               <p className="text-[11px] text-slate-400 font-medium">
-                ใช้แค่ {game.type} ไม่ต้องใช้รหัสผ่าน • รับคะแนนสะสมทุกคำสั่งซื้อ
+                ใช้แค่ {game.type} ไม่ต้องใช้รหัสผ่าน • เติมง่ายไม่ต้องล็อกอิน
               </p>
             </div>
           </div>
@@ -154,7 +141,7 @@ export default function TopUpPage({
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5">
-        
+
         {/* Mobile Back Button */}
         <button
           onClick={onBack}
@@ -164,43 +151,13 @@ export default function TopUpPage({
           <span>กลับไปเลือกเกม</span>
         </button>
 
-        {/* Member Login Notice Banner */}
-        {!user ? (
-          <div className="mb-6 bg-indigo-950/40 border border-indigo-500/30 text-indigo-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 shadow-lg">
-            <div className="flex items-center space-x-3 text-xs sm:text-sm">
-              <Info className="w-5 h-5 text-indigo-400 shrink-0" />
-              <span>
-                กรุณา <strong className="font-bold underline cursor-pointer text-indigo-300" onClick={onOpenLogin}>เข้าสู่ระบบสมาชิก</strong> เพื่อรับเหรียญสะสมและบันทึกประวัติคำสั่งซื้ออัตโนมัติ
-              </span>
-            </div>
-            <button
-              onClick={onOpenLogin}
-              className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-indigo-600 hover:to-pink-600 text-white text-xs font-bold px-4 py-2 rounded-xl flex items-center space-x-1.5 shadow-lg shadow-indigo-600/20 transition cursor-pointer"
-            >
-              <span>เข้าสู่ระบบ / สมัคร</span>
-            </button>
-          </div>
-        ) : (
-          <div className="mb-6 bg-emerald-950/40 border border-emerald-500/30 text-emerald-200 rounded-2xl p-3.5 flex items-center justify-between shadow-lg">
-            <div className="flex items-center space-x-2.5 text-xs sm:text-sm">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>
-                เข้าสู่ระบบสมาชิก: <strong className="text-white">@{user.username || user.name}</strong> • ยอดสะสม: <strong className="text-indigo-400">{user.coins} Coins</strong>
-              </span>
-            </div>
-            <span className="text-[11px] bg-emerald-600 text-white px-2.5 py-0.5 rounded-lg font-bold">
-              สมาชิก termgame
-            </span>
-          </div>
-        )}
-
         {/* Information & Guide Card */}
         <div className="bg-slate-900/80 rounded-3xl p-5 sm:p-6 border border-slate-800 shadow-xl mb-6">
           <h2 className="text-base sm:text-lg font-black text-white mb-2">
             เติม {game.name} กับ termgame ราคาถูก ปลอดภัย 100%
           </h2>
           <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            เติมเงิน {game.name} ออนไลน์ง่ายๆ กับ termgame ใช้เพียง {game.type} ไม่ต้องใช้รหัสผ่าน ปลอดภัย ไม่เสี่ยงโดนแบน ระบบอัตโนมัติ 24 ชม. 
+            เติมเงิน {game.name} ออนไลน์ง่ายๆ กับ termgame ใช้เพียง {game.type} ไม่ต้องใช้รหัสผ่าน ไม่ต้องล็อกอิน ปลอดภัย ไม่เสี่ยงโดนแบน ระบบอัตโนมัติ 24 ชม.
             รองรับช่องทางชำระเงินทั้ง QR PromptPay และ TrueMoney Wallet อัตโนมัติ 24 ชม.
           </p>
 
@@ -326,11 +283,10 @@ export default function TopUpPage({
                 <div
                   key={pm.id}
                   onClick={() => setSelectedPayment(pm.id)}
-                  className={`cursor-pointer rounded-2xl p-4 border transition-all flex flex-col justify-between relative ${
-                    isSelected
+                  className={`cursor-pointer rounded-2xl p-4 border transition-all flex flex-col justify-between relative ${isSelected
                       ? 'border-indigo-500 bg-indigo-950/30 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/40'
                       : 'border-slate-800 hover:border-slate-700 bg-slate-950/60'
-                  }`}
+                    }`}
                 >
                   {isSelected && (
                     <div className="absolute top-3.5 right-3.5 text-indigo-400">
@@ -407,11 +363,10 @@ export default function TopUpPage({
                 <div
                   key={pkg.id}
                   onClick={() => setSelectedPackage(pkg)}
-                  className={`cursor-pointer rounded-2xl p-4 border transition-all flex flex-col justify-between relative ${
-                    isSelected
+                  className={`cursor-pointer rounded-2xl p-4 border transition-all flex flex-col justify-between relative ${isSelected
                       ? 'border-indigo-500 bg-indigo-950/40 shadow-xl ring-2 ring-indigo-500/40'
                       : 'border-slate-800 hover:border-slate-700 bg-slate-950/60'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl">{pkg.icon}</span>
@@ -455,7 +410,7 @@ export default function TopUpPage({
         {/* STEP 4: Order Summary Floating Dock */}
         <div className="sticky bottom-4 z-30 bg-slate-950/95 text-white rounded-3xl p-4 sm:p-5 shadow-2xl border border-indigo-500/40 backdrop-blur-xl">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            
+
             <div className="flex items-center space-x-3 w-full sm:w-auto">
               <div className="w-12 h-12 rounded-2xl bg-indigo-600/30 border border-indigo-500/40 text-indigo-400 flex items-center justify-center font-black text-xl shrink-0">
                 {selectedPackage ? selectedPackage.icon : '🎮'}

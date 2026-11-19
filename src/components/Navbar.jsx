@@ -1,29 +1,19 @@
 import React, { useState } from 'react';
-import { 
-  Gamepad2, 
-  Flame, 
-  Coins, 
-  LogOut, 
-  History, 
-  User, 
-  Menu, 
-  X, 
-  ShieldCheck, 
-  ChevronDown, 
+import {
+  Flame,
+  History,
+  Menu,
+  X,
   Zap
 } from 'lucide-react';
 
-export default function Navbar({ 
-  user, 
-  onOpenLogin, 
-  onLogout, 
-  onSelectGame, 
-  activeView, 
+export default function Navbar({
+  onSelectGame,
+  activeView,
   setActiveView,
-  onOpenHistory 
+  onOpenHistory
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 bg-[#0B0F19]/90 backdrop-blur-xl border-b border-slate-800 shadow-xl">
@@ -52,10 +42,10 @@ export default function Navbar({
       {/* Main Navigation */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18">
-          
+
           {/* Logo & Brand: termgame */}
-          <div 
-            className="flex items-center space-x-3 cursor-pointer group" 
+          <div
+            className="flex items-center space-x-3 cursor-pointer group"
             onClick={() => setActiveView('home')}
           >
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center text-white font-black shadow-lg shadow-indigo-500/25 border border-indigo-400/30 group-hover:scale-105 transition-transform">
@@ -80,11 +70,10 @@ export default function Navbar({
           <nav className="hidden lg:flex items-center space-x-1.5 text-sm font-semibold text-slate-300">
             <button
               onClick={() => setActiveView('home')}
-              className={`px-4 py-2 rounded-xl transition ${
-                activeView === 'home' 
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold' 
+              className={`px-4 py-2 rounded-xl transition ${activeView === 'home'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 font-bold'
                   : 'hover:bg-slate-800/80 hover:text-white'
-              }`}
+                }`}
             >
               หน้าแรก
             </button>
@@ -103,11 +92,10 @@ export default function Navbar({
 
             <button
               onClick={() => onSelectGame('pubg')}
-              className={`px-4 py-2 rounded-xl flex items-center space-x-2 transition ${
-                activeView === 'pubg' 
-                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold' 
+              className={`px-4 py-2 rounded-xl flex items-center space-x-2 transition ${activeView === 'pubg'
+                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold'
                   : 'hover:bg-slate-800/80 hover:text-amber-300'
-              }`}
+                }`}
             >
               <span className="w-2 h-2 rounded-full bg-amber-400"></span>
               <span>PUBG Mobile</span>
@@ -115,103 +103,25 @@ export default function Navbar({
 
             <button
               onClick={() => onSelectGame('valorant')}
-              className={`px-4 py-2 rounded-xl flex items-center space-x-2 transition ${
-                activeView === 'valorant' 
-                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold' 
+              className={`px-4 py-2 rounded-xl flex items-center space-x-2 transition ${activeView === 'valorant'
+                  ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold'
                   : 'hover:bg-slate-800/80 hover:text-rose-300'
-              }`}
+                }`}
             >
               <span className="w-2 h-2 rounded-full bg-rose-400"></span>
               <span>VALORANT</span>
             </button>
-
-            <button
-              onClick={onOpenHistory}
-              className="px-4 py-2 rounded-xl hover:bg-slate-800/80 flex items-center space-x-1.5 transition text-slate-400 hover:text-slate-200"
-            >
-              <History className="w-4 h-4" />
-              <span>เช็คคำสั่งซื้อ</span>
-            </button>
           </nav>
 
-          {/* Right Action: LINE Login / User Profile */}
+          {/* Right Action: เช็คคำสั่งซื้อ (แทนปุ่ม Login) */}
           <div className="flex items-center space-x-3">
-            {user ? (
-              <div className="relative">
-                <button
-                  onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                  className="flex items-center space-x-2.5 p-1.5 sm:px-3 sm:py-2 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700/80 transition text-left"
-                >
-                  <div className="relative">
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-8 h-8 rounded-full object-cover border-2 border-indigo-500"
-                    />
-                    <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 rounded-full border border-slate-900 flex items-center justify-center">
-                      <span className="text-[7px] text-white font-bold">✓</span>
-                    </div>
-                  </div>
-                  <div className="hidden sm:block">
-                    <div className="text-xs font-bold text-white truncate max-w-[110px]">
-                      {user.name}
-                    </div>
-                    <div className="flex items-center space-x-1 text-[11px] text-indigo-400 font-semibold">
-                      <Coins className="w-3 h-3" />
-                      <span>{user.coins} Coins</span>
-                    </div>
-                  </div>
-                  <ChevronDown className="w-4 h-4 text-slate-400" />
-                </button>
-
-                {/* Dropdown Menu */}
-                {userDropdownOpen && (
-                  <div 
-                    className="absolute right-0 mt-2 w-56 bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 py-2 z-50 animate-fadeIn"
-                    onMouseLeave={() => setUserDropdownOpen(false)}
-                  >
-                    <div className="px-4 py-2.5 border-b border-slate-800 bg-slate-950/60">
-                      <p className="text-xs text-slate-400">บัญชีสมาชิก termgame</p>
-                      <p className="text-sm font-bold text-white truncate">@{user.username || user.name}</p>
-                      <div className="mt-1 flex items-center space-x-1 text-xs text-indigo-400 font-bold">
-                        <Coins className="w-3.5 h-3.5" />
-                        <span>ยอดสะสม: {user.coins} Coins</span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        onOpenHistory();
-                      }}
-                      className="w-full px-4 py-2.5 text-left text-xs font-medium text-slate-300 hover:bg-slate-800 flex items-center space-x-2.5 cursor-pointer"
-                    >
-                      <History className="w-4 h-4 text-slate-400" />
-                      <span>ประวัติคำสั่งซื้อทั้งหมด</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setUserDropdownOpen(false);
-                        onLogout();
-                      }}
-                      className="w-full px-4 py-2.5 text-left text-xs font-bold text-rose-400 hover:bg-rose-500/10 flex items-center space-x-2.5 cursor-pointer"
-                    >
-                      <LogOut className="w-4 h-4 text-rose-400" />
-                      <span>ออกจากระบบ</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={onOpenLogin}
-                className="bg-gradient-to-r from-indigo-500 via-purple-600 to-pink-500 hover:from-indigo-600 hover:to-pink-600 active:scale-95 text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center space-x-2 shadow-lg shadow-indigo-500/25 transition cursor-pointer"
-              >
-                <User className="w-4 h-4 text-white" />
-                <span>เข้าสู่ระบบ / สมัคร</span>
-              </button>
-            )}
+            <button
+              onClick={onOpenHistory}
+              className="bg-slate-800/90 hover:bg-slate-800 border border-slate-700/80 active:scale-95 text-slate-200 hover:text-white text-xs sm:text-sm font-bold px-4 py-2.5 rounded-xl flex items-center space-x-2 shadow-md transition cursor-pointer"
+            >
+              <History className="w-4 h-4 text-indigo-400" />
+              <span>เช็คคำสั่งซื้อ</span>
+            </button>
 
             {/* Mobile menu button */}
             <button
@@ -263,7 +173,7 @@ export default function Navbar({
               className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 flex items-center space-x-2"
             >
               <History className="w-4 h-4 text-slate-400" />
-              <span>ประวัติคำสั่งซื้อของฉัน</span>
+              <span>เช็คคำสั่งซื้อ</span>
             </button>
           </div>
         )}
